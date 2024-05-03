@@ -54,6 +54,7 @@ export default {
       english: "",
     };
   },
+  // 从后端获取数据
   created: function () {
     this.id = this.$route.params.id;
     let stuinfo = JSON.parse(localStorage.getItem("stu" + this.id));

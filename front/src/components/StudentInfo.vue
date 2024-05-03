@@ -41,31 +41,61 @@ export default {
   data() {
     return {
       msg: "Welcome to Student Management App",
+      stu: Array(),
     };
   },
   computed: {
-    stu: function () {
-      let len = localStorage.length;
-      let stuinfo;
-      let stu = Array();
-      for (let i = 0; i < len; i++) {
-        let stukey = localStorage.key(i);
-        if (stukey.substr(0, 3) == "stu") {
-          stuinfo = JSON.parse(localStorage.getItem(localStorage.key(i)));
-          stu.push(stuinfo);
-          //console.log(stuinfo.aggregate);
-        }
-      }
-      stu.sort(function(a,b){
-        return a.aggregate-b.aggregate;
-      })
-      return stu;
-    },
   },
   methods: {
-    del_stu_info: function (stuid) {
-      localStorage.removeItem("stu" + stuid);
+    // info从后端数据库获得
+    infoFetchData: async function(){
+      console.log('Data fethed from back')
+      try {
+        console.log('Data retrieved:')
+        const response = await this.$axios.get('http://127.0.0.1:8081/api')
+        console.log(response.data)
+        return response.data
+      } catch(error) {
+        console.error('Error fetching data:', error);
+        return []; // 发生错误时返回空数组
+      }
     },
+    // 前端展示从后端取得的数据，排序处理
+    showData: function (data) {
+        let len = data.length;
+        let stuinfo;
+        for (let i = 0; i < len; i++) {
+          stuinfo = data[i]
+          stuinfo.aggregate = stuinfo.chinese + stuinfo.math + stuinfo.english
+          stuinfo.average = stuinfo.aggregate / 3
+          this.stu.push(stuinfo)
+        }
+        this.stu.sort(function(a,b){
+          return b.aggregate - a.aggregate //分数从大到小，最上面的是king
+          //return a.aggregate-b.aggregate;//分数从小到大
+        })
+        return this.stu;
+    },
+    // 删除的操作要返回到数据库中
+    // 后端，让后端执行删除的操作
+    del_stu_info: function (stuid) {
+      this.$axios({
+            method:"post",
+            url:"http://127.0.0.1:8081/del",
+            data: {"id":stuid,},
+        }).then((res)=>{
+            console.log("Success Post");
+            console.log(res.data);
+        })
+          .catch(function (error) {
+          console.log(error);
+        })
+    },
+  },
+
+  created: async function(){
+    const data = await this.infoFetchData(); // 等待数据被获取,注意异步函数的调整
+    this.showData(data); // 使用获取到的数据调用showData方法
   },
 };
 </script>
