@@ -88,12 +88,14 @@ export default {
                 }).then((res)=>{
                     console.log("Success Post:");
                     console.log(res.data);
+                    this.$router.push({ path: "/info" }); // 转到主页
+                    this.$nextTick(() => { // 确保在DOM更新完成后执行
+                      window.location.reload(); 
+                    });
                 })
                   .catch(function (error) {
                   console.log(error);
                 })
-                //转到主页
-                this.$router.push({ path: "/info" });
     },
     btn_add_stuinfo: function () {
       // 确保分数为数字类型

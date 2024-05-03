@@ -23,62 +23,23 @@ var connection = mysql.createConnection({
 connection.connect();
 
 function converter(id, name, gender, chinese, math, english) {
-    return Number(id), String(name), String(gender), Number(chinese), Number(math), Number(english);
-};
-
-
-
-// // 增加成绩接口
-// app.post("/add_score", function(req, res) {
-//     // 从请求体中获取学生ID和成绩
-//     var { student_id, score } = req.body;
-//     var sql = "INSERT INTO stuScore (student_id, score) VALUES (?, ?)";
-
-//     connection.query(sql, [student_id, score], function(error, results) {
-//         if (error) {
-//             console.error("插入失败: " + error.message);
-//             res.send("插入成绩失败");
-//             return;
-//         }
-//         console.log("插入结果: ", results);
-//         res.send("成绩添加成功");
-//     });
-// });
-
-// // 修改成绩接口
-// app.post("/update_score", function(req, res) {
-//     // 从请求体中获取学生ID和新成绩
-//     var { student_id, new_score } = req.body;
-//     var sql = "UPDATE stuScore SET score = ? WHERE student_id = ?";
-
-//     connection.query(sql, [new_score, student_id], function(error, results) {
-//         if (error) {
-//             console.error("更新失败: " + error.message);
-//             res.send("更新成绩失败");
-//             return;
-//         }
-//         console.log("更新结果: ", results);
-//         res.send("成绩更新成功");
-//     });
-// });
-
-
-// // 删除成绩接口
-// app.post("/delete_score", function(req, res) {
-//     // 从请求体中获取学生ID
-//     var { student_id } = req.body;
-//     var sql = "DELETE FROM stuScore WHERE student_id = ?";
-
-//     connection.query(sql, [student_id], function(error, results) {
-//         if (error) {
-//             console.error("删除失败: " + error.message);
-//             res.send("删除成绩失败");
-//             return;
-//         }
-//         console.log("删除结果: ", results);
-//         res.send("成绩删除成功");
-//     });
-// });
+    var g
+    if (gender === 'male') {
+        g = 1;
+    } else if (gender === 'female') {
+        g = 0;
+    } else {
+        g = null;
+    }
+    return {
+        id: Number(id),
+        name: String(name),
+        gender: g,
+        chinese: Number(chinese),
+        math: Number(math),
+        english: Number(english)
+    };
+}
 
 //  测试主页输出 成绩表中所有数据
 // 当访问网站根目录(/)时，服务器执行一个查询操作，
@@ -133,11 +94,12 @@ app.get('/api/:id', (req, res) => {
 app.post("/edit", function(req, res) {
     console.log("/edit Post Request");
     // 从请求体中获取学生ID和成绩
-    console.log(req.body);
+    console.log(req.body)
     var { id, name, gender, chinese, math, english } = req.body;
-    id, name, gender, chinese, math, english = converter(id, name, gender, chinese, math, english)
+    var dt = converter(id, name, gender, chinese, math, english)
+    console.log(dt)
     var sql = "UPDATE stuScore SET name = ?, gender = ?, chinese = ?, math = ?, english = ? WHERE id = ?";
-    connection.query(sql, [name, gender, chinese, math, english, id], function(error, results) {
+    connection.query(sql, [dt.name, dt.gender, dt.chinese, dt.math, dt.english, dt.id], function(error, results) {
         if (error) {
             console.error("Updata Failed: " + error.message);
             return;
@@ -148,25 +110,17 @@ app.post("/edit", function(req, res) {
     });
 });
 
-
-
-
-//  POST 请求
-app.post("/", function(req, res) {
-    var post_obj = req.body
-    console.log("主页 POST 请求,收到前端表单提交的数据：");
-    console.log(post_obj)
-    res.end(JSON.stringify(post_obj));
-});
-
-
+// /insert 页面post请求，插入一个新学生的信息
+//  直接传表单，简单处理后，插入进数据库
+//  通过测试
 app.post("/insert", function(req, res) {
     console.log("/insert Post 请求");
     var { id, name, gender, chinese, math, english } = req.body;
-    id, name, gender, chinese, math, english = converter(id, name, gender, chinese, math, english)
     console.log(id, name, gender, chinese, math, english)
+    var dt = converter(id, name, gender, chinese, math, english)
+    console.log(dt)
     var sql = "INSERT INTO stuScore (id, name, gender, chinese, math, english) VALUES (?, ?, ?, ?, ?, ?)";
-    connection.query(sql, [id, name, gender, chinese, math, english], function(error, results) {
+    connection.query(sql, [dt.id, dt.name, dt.gender, dt.chinese, dt.math, dt.english], function(error, results) {
         if (error) {
             console.error("Insert Failed: " + error.message);
             return;
@@ -176,20 +130,13 @@ app.post("/insert", function(req, res) {
 });
 
 
-//  /list_user 页面 GET 请求
-app.get("/list_user", function(req, res) {
-    console.log("/list_user GET 请求");
-    res.send("成绩列表页面");
-});
-
+// 当访问网站根目录(/)时，服务器执行一个查询操作，
+// 获取stuScore表中的所有数据
+//当根目录接收到POST请求时，服务器响应
+//一般是登录，或者接收文件，存储数据之类的服务
 var server = app.listen(8081, '127.0.0.1', function() {
     var host = server.address().address;
     var port = server.address().port;
-
-    // 当访问网站根目录(/)时，服务器执行一个查询操作，
-    // 获取stuScore表中的所有数据
-    //当根目录接收到POST请求时，服务器响应
-    //一般是登录，或者接收文件，存储数据之类的服务
     console.log("应用实例，访问地址为 http://%s:%s/api", host, port);
 
     // 指定id学生的信息

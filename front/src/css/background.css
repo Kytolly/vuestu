@@ -1,0 +1,22 @@
+.page-background {
+    position: relative;
+    min-height: 100vh;
+    width: 100%;
+    z-index: 1;
+    /* 设置背景图片，固定及覆盖 */
+    background-image: url('../img/back.png');
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+}
+
+.page-background::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(243, 242, 242, 0.5);
+    z-index: -1;
+}
