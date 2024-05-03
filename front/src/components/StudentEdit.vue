@@ -54,17 +54,30 @@ export default {
       english: "",
     };
   },
-  // 从后端获取数据
+  // 从后端获取指定id的数据
   created: function () {
     this.id = this.$route.params.id;
-    let stuinfo = JSON.parse(localStorage.getItem("stu" + this.id));
-    this.name = stuinfo.name;
-    this.gender = stuinfo.gender;
-    this.chinese = stuinfo.chinese;
-    this.math = stuinfo.math;
-    this.english = stuinfo.english;
-    this.aggregate = stuinfo.aggregate;
-    this.average = stuinfo.average;
+    try {
+        console.log('Data retrieved:')
+        response = this.$axios.get('http://127.0.0.1:8081/edit',{
+          params: {
+            id:this.id
+          }
+        })
+        console.log(response.data) 
+      } catch(error) {
+        console.error('Error fetching data:', error);
+        return []; // 发生错误时返回空数组
+      }
+    // let stuinfo = JSON.parse(localStorage.getItem("stu" + this.id));
+    // let stuinfo = JSON.parse(localStorage.getItem("stu" + this.id));
+    // this.name = stuinfo.name;
+    // this.gender = stuinfo.gender;
+    // this.chinese = stuinfo.chinese;
+    // this.math = stuinfo.math;
+    // this.english = stuinfo.english;
+    // this.aggregate = stuinfo.aggregate;
+    // this.average = stuinfo.average;
   },
   computed:{
     verify: function(){
@@ -74,7 +87,7 @@ export default {
       }
       if(!this.gender){
         console.log(this.gender)
-        return {"falg":false,"msg":'性别必须被选择!除非真的是武装直升机~'}
+        return {"flag":false,"msg":'性别必须被选择!'}
       }
       if(this.chinese<0||this.chinese>100){//检查语文成绩是否在0-100
         console.log(this.chinese)
@@ -92,6 +105,40 @@ export default {
     },
   },
   methods: {
+      editFetchData: async function(ID_edit) {
+        console.log('Data fetched from back');
+        let url = 'http://127.0.0.1:8081/api/'+ ID_edit.toString()
+        try {
+          let response = await this.$axios.get(url);
+          console.log('Data retrieved:', response.data);
+          return response.data;
+        } catch(error) {
+          console.error('Error fetching data:', error);
+        }
+    },
+    showOriginInfo: function(data){
+      this.id = data.id;
+      this.name = data.name;
+      this.gender = data.gender;
+      this.chinese = data.chinese;
+      this.math = data.math;
+      this.english = data.english;
+    },
+    // 把修改后的数据发送给后端
+    sendDataToBack: function(oStu){
+    this.$axios({
+                method:"post",
+                url:"http://127.0.0.1:8081/edit",
+                data:oStu,
+              }).then((res)=>{
+                  console.log("Succsess Post");
+                  console.log(res.data);
+              })
+                .catch(function (error) {
+                console.log(error);
+              })
+              this.$router.push({ path: "/info" });
+    },
     btn_edit_stuinfo: function () {
       // 确保分数为数字类型
       let chineseScore = parseFloat(this.chinese);
@@ -109,14 +156,22 @@ export default {
         math: this.math,
         english: this.english,
       };
-      var key = "stu" + oStu.id;
-      var stu = JSON.stringify(oStu);
-      localStorage.setItem(key, stu);
-      this.$router.push({ path: "/info" });
+      this.sendDataToBack(oStu)
+      // var key = "stu" + oStu.id;
+      // var stu = JSON.stringify(oStu);
+      // localStorage.setItem(key, stu);
+      // this.$router.push({ path: "/info" });
     },
   },
+  created: async function(){
+    this.id = this.$route.params.id
+    console.log(this.id)
+    let data = await this.editFetchData(this.id)
+    this.showOriginInfo(data)
+  }
 };
 </script>
+
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
