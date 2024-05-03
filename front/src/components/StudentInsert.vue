@@ -18,8 +18,8 @@
       </tr>
       <tr>
         <th>Gender</th>
-        <td><input type="radio" v-model="gender" value = 'male'/><lable>男</lable>
-        <input type="radio" v-model="gender" value = 'female'/><lable>女</lable></td>
+        <td><input type="radio" v-model="gender" value = 'male'/><label>男</label>
+        <input type="radio" v-model="gender" value = 'female'/><label>女</label></td>
       </tr>
       <tr>
         <th>Chinese</th>
@@ -54,21 +54,6 @@ export default {
       english: "",
     };
   },
-  created: function () {
-    let len = localStorage.length;
-    let stuinfo;
-    let id_max = 10001;
-    for (let i = 0; i < len; i++) {
-      let stukey = localStorage.key(i);
-      if (stukey.substr(0, 3) == "stu") {
-        stuinfo = JSON.parse(localStorage.getItem(localStorage.key(i)));
-        if (id_max < stuinfo.id) {
-          id_max = stuinfo.id;
-        }
-      }
-    }
-    this.id = parseInt(id_max) + 1;
-  },
   computed:{
     verify: function(){
       if(!/^\d{5}$/.test(this.id)){//5位数字的正则表达式
@@ -95,19 +80,28 @@ export default {
     },
   },
   methods: {
+    sendDataToBack: function(oStu){
+      this.$axios({
+                  method:"post",
+                  url:"http://127.0.0.1:8081/insert",
+                  data:oStu,
+                }).then((res)=>{
+                    console.log("Success Post:");
+                    console.log(res.data);
+                })
+                  .catch(function (error) {
+                  console.log(error);
+                })
+                //转到主页
+                this.$router.push({ path: "/info" });
+    },
     btn_add_stuinfo: function () {
-      if(!this.verify.flag){
-        alert(this.verify.msg)
-        return ;
-      }
       // 确保分数为数字类型
-      let chineseScore = parseFloat(this.chinese);
-      let mathScore = parseFloat(this.math);
-      let englishScore = parseFloat(this.english);
-
+      let chineseScore = Number(this.chinese);
+      let mathScore = Number(this.math);
+      let englishScore = Number(this.english);
       let aggregate = chineseScore + mathScore + englishScore;
       let average = aggregate / 3.0;
-
       let oStu = {
         id: this.id,
         name: this.name,
@@ -118,11 +112,34 @@ export default {
         aggregate: aggregate,
         average: average
       };
-      var key = "stu" + oStu.id;
-      var stu = JSON.stringify(oStu);
-      localStorage.setItem(key, stu);
-      this.$router.push({ path: "/info" });
+      
+      if(!this.verify.flag){
+        alert(this.verify.msg)
+        return ;
+      }
+      console.log(oStu)
+      this.sendDataToBack(oStu)
+
+      // var key = "stu" + oStu.id;
+      // var stu = JSON.stringify(oStu);
+      // localStorage.setItem(key, stu);
+      // this.$router.push({ path: "/info" });
     },
+  },
+  created: function () {
+    // let len = localStorage.length;
+    // let stuinfo;
+    // let id_max = 10001;
+    // for (let i = 0; i < len; i++) {
+    //   let stukey = localStorage.key(i);
+    //   if (stukey.substr(0, 3) == "stu") {
+    //     stuinfo = JSON.parse(localStorage.getItem(localStorage.key(i)));
+    //     if (id_max < stuinfo.id) {
+    //       id_max = stuinfo.id;
+    //     }
+    //   }
+    // }
+    // this.id = parseInt(id_max) + 1;
   },
 };
 </script>

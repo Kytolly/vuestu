@@ -142,11 +142,13 @@ app.post("/edit", function(req, res) {
             console.error("Updata Failed: " + error.message);
             return;
         }
-        console.log("更新结果: ", results);
-        console.log(`更新的学生信息： 
-        'http://127.0.0.1:8081/api/${id.toString()}`)
+        console.log("Update Results: ", results);
+        //console.log(`更新的学生信息： 'http://127.0.0.1:8081/api/${id.toString()}`)
+
     });
 });
+
+
 
 
 //  POST 请求
@@ -158,42 +160,19 @@ app.post("/", function(req, res) {
 });
 
 
-app.post("/add_score", function(req, res) {
-    console.log("/add_user Post 请求");
-    // 从请求体中获取学生ID和成绩
+app.post("/insert", function(req, res) {
+    console.log("/insert Post 请求");
     var { id, name, gender, chinese, math, english } = req.body;
+    id, name, gender, chinese, math, english = converter(id, name, gender, chinese, math, english)
+    console.log(id, name, gender, chinese, math, english)
     var sql = "INSERT INTO stuScore (id, name, gender, chinese, math, english) VALUES (?, ?, ?, ?, ?, ?)";
-
     connection.query(sql, [id, name, gender, chinese, math, english], function(error, results) {
         if (error) {
-            console.error("插入失败: " + error.message);
-            res.send("插入成绩失败");
+            console.error("Insert Failed: " + error.message);
             return;
         }
-        console.log("插入结果: ", results);
-        res.send("成绩添加成功");
+        console.log("Insert Results: ", results);
     });
-});
-
-// insert接口新建学生信息
-app.post("/insert", function(req, res) {
-    var insert_obj = req.body
-    console.log("主页 POST 请求,收到前端表单提交的数据：");
-    console.log(insert_obj)
-
-    //计算成绩平均分和总分
-    insert_obj.total = req.body.chinese + req.body.math + req.body.english
-    insert_obj.avg = (req.body.chinese + req.body.math + req.body.english) / 3
-
-    //将数据插入数据库
-    connection.query('INSERT INTO stuScore SET ?', insert_obj, (err, result) => {
-        if (err) {
-            console.log(err)
-        } else {
-            console.log(result);
-            res.send('添加成功')
-        }
-    })
 });
 
 
@@ -217,7 +196,7 @@ var server = app.listen(8081, '127.0.0.1', function() {
     console.log("应用实例，访问地址为 http://%s:%s/api/1", host, port);
 
     //当 /add_user接收到POST请求时， 服务器响应“ 增加成绩”。
-    console.log("增加成绩页面，访问地址为 http://%s:%s/add_user", host, port);
+    console.log("插入成绩页面，访问地址为 http://%s:%s/insert", host, port);
 
     //当 /update_user接收到POST请求时， 服务器响应“ 修改成绩”。 
     console.log("修改成绩页面，访问地址为 http://%s:%s/edit", host, port);
