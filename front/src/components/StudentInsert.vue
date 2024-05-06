@@ -62,7 +62,7 @@ export default {
       }
       if(!this.gender){
         console.log(this.gender)
-        return {"falg":false,"msg":'性别必须被选择!除非真的是武装直升机~'}
+        return {"flag":false,"msg":'性别必须被选择!'}
       }
       if(this.chinese<0||this.chinese>100){//检查语文成绩是否在0-100
         console.log(this.chinese)
@@ -125,7 +125,7 @@ export default {
       // var key = "stu" + oStu.id;
       // var stu = JSON.stringify(oStu);
       // localStorage.setItem(key, stu);
-      // this.$router.push({ path: "/info" });
+      this.$router.push({ path: "/info" });
     },
   },
   created: function () {
