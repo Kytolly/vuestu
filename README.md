@@ -1,32 +1,29 @@
-# vuestu
+# vuestu(UESTC-复杂软件技术开发)
 
-复杂软件与开发结课大作业（UESTC）
+* Tech Stack: HTML5+JavaScript+Node+Vue+Express+MySQL+Axios
+* This project is divided into three steps:
 
-* 指导老师：王玉林
-* 技术栈：HTML5+JavaScript+Node+Vue+Express+MySQL+Axios
-* 本实验分为三步：
+  * Frontend modifications for input validation:
 
-  * 前端修改，进行输入的检查：
+    - [X] Student ID must be 5 digits, needs validation and prompts;
+    - [X] Grades must be in range [0,100], needs validation and prompts;
+    - [X] Gender changed to male/female selection;
+    - [X] Without changing the insert and edit page content, add two data fields to display page: total score and average score, with automatic sorting by average score from high to low, test data to be input by users.
+  * Backend database connection and basic business logic:
 
-    - [X] 学号限定为5位数字，需检查和提示；
-    - [X] 成绩范围为[0,100]，需检查和提示；
-    - [X] 性别转变成男女选择；
-    - [X] 在插入和编辑页面内容不变的情况下，使得显示页面增加两个数据字段：总分和平均分，并自动实现按平均分由高到低显示，测试数据由用户任意输入。
-  * 后端链接数据库，实现基本的业务逻辑:
+    - [X] Change gender data type to bit in database;
+    - [X] Add two data fields in stuScore table: total score and average score;
+    - [X] Complete student score add and modify functions;
+  * Frontend-Backend Integration and Extensions:
 
-    - [X] 将数据库中性别数据类型转变成bit；
-    - [X] 在stuScore表中增加两个数据字段：总分和平均分；
-    - [X] 完善学生成绩的增加、修改功能；
-  * 前后端集成与扩展
+    - [X] Axios Web access
+    - [X] Resolve cross-origin issues
+    - [X] Move the add button from each record to the top of page;
+    - [X] Require user confirmation before deleting records;
+    - [X] Add pagination functionality;
+    - [X] Add query function to search specific student scores by name or student ID;
+* Common Commands:
 
-    - [X] AxiosWeb访问
-    - [X] 前后端跨域问题解决
-    - [X] 将每条记录上的增加按钮移动到页面上方；
-    - [X] 删除记录前要求用户确认；
-    - [X] 增加记录分页功能；
-    - [X] 增加按用户姓名或学号查询特定学生成绩功能；
-* 常见指令：
-
-  * 安装依赖：到指定目录下 `npm install`
-  * 前端启动（每次改完代码无需重启）：`cd front`+`npm run dev`
-  * 后端服务启动（每次修改完代码需要重新启动）：`cd back`+`node express_index.js`
+  * Install dependencies: Go to specified directory and run `npm install`
+  * Start frontend (no restart needed after code changes): `cd front`+`npm run dev`
+  * Start backend server (restart needed after code changes): `cd back`+`node express_index.js`
