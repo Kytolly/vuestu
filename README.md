@@ -1,4 +1,4 @@
-# vuestu(UESTC-复杂软件技术开发)
+# StudentScoreManageSystem(UESTC-复杂软件技术开发)
 
 * Tech Stack: HTML5+JavaScript+Node+Vue+Express+MySQL+Axios
 * This project is divided into three steps:
